@@ -16,6 +16,8 @@ Source:		libm4rie-%{snapshot}%{patchlevel}.tar.bz2
 URL:		http://m4ri.sagemath.org
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
+BuildRequires:	libm4ri-devel
+
 %description
 M4RIE is a library for fast arithmetic with dense matrices over F2 for
 2 <= e <= 10. It was started and is currently maintained by Martin Albrecht.
