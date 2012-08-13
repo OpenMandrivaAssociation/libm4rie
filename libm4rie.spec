@@ -15,7 +15,8 @@ Source:		http://m4ri.sagemath.org/downloads/m4rie-%{snapshot}.tar.gz
 
 BuildRequires:	doxygen
 BuildRequires:	givaro-devel
-BuildRequires:	gmp-devel
+BuildRequires:	gmpxx-devel
+BuildRequires:	gomp-devel
 BuildRequires:	libm4ri-devel
 BuildRequires:	texlive
 # Patch sent upstream 25 April 2012.  Adapt to changes in givaro 3.5.0.
