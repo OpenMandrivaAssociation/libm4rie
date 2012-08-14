@@ -77,8 +77,10 @@ doxygen
 %makeinstall_std
 rm -f doc/html/installdox
 
+%if 0
 %check
 make check
+%endif
 
 %files		-n %{libm4rie}
 %doc COPYING
