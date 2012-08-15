@@ -9,7 +9,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	Fast arithmetic with dense matrices over F2 for 2 <= e <= 10
 Version:	0.%{snapshot}
-Release:	1
+Release:	2
 URL:		http://m4ri.sagemath.org
 Source:		http://m4ri.sagemath.org/downloads/m4rie-%{snapshot}.tar.gz
 
