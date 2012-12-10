@@ -88,3 +88,18 @@ make check
 %doc doc/html
 %{_includedir}/m4rie
 %{_libdir}/libm4rie.so
+
+
+%changelog
+* Wed Aug 15 2012 Paulo Andrade <pcpa@mandriva.com.br> 0.20120415-2
++ Revision: 814866
+- Bump and rebuild.
+- Another release bump and rebuild.
+- Bump release and rebuild.
+- Update to release matching http://pkgs.fedoraproject.org/cgit/m4rie.git
+
+* Tue Jan 24 2012 Paulo Andrade <pcpa@mandriva.com.br> 0.20111004-1
++ Revision: 767464
+- import libm4rie
+- import libm4rie
+
