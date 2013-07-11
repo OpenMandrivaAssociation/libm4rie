@@ -1,4 +1,4 @@
-%define	snapshot		20120415
+%define	snapshot		20130416
 %define	name			libm4rie
 %define major			0
 %define	libm4rie		%mklibname m4rie %{major}
@@ -7,11 +7,20 @@
 Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
-Summary:	Fast arithmetic with dense matrices over F2 for 2 <= e <= 10
+Summary:	Linear Algebra over F_2^e
 Version:	0.%{snapshot}
-Release:	2
+Release:	1
 URL:		http://m4ri.sagemath.org
 Source:		http://m4ri.sagemath.org/downloads/m4rie-%{snapshot}.tar.gz
+# The doxygen control file was omitted from this release
+Source1:	m4rie-doxyfile
+Source2:	%{name}.rpmlintrc
+# Fix compiler warnings that may indicate runtime / test-time problems
+Patch0:		m4rie-warning.patch
+# Add aarch64 support.
+Patch1:		m4rie-aarch64.patch
+# Fix a broken doxygen construct
+Patch2:		m4rie-doxygen.patch
 
 BuildRequires:	doxygen
 BuildRequires:	givaro-devel
@@ -19,15 +28,12 @@ BuildRequires:	gmpxx-devel
 BuildRequires:	gomp-devel
 BuildRequires:	libm4ri-devel
 BuildRequires:	texlive
-# Patch sent upstream 25 April 2012.  Adapt to changes in givaro 3.5.0.
-Patch0:		m4rie-givaro.patch
 
 %description
-M4RIE is a library for fast arithmetic with dense matrices over F2 for
-2 <= e <= 10. It was started and is currently maintained by Martin Albrecht.
-The name stems from the fact that is relies heavily on M4RI. M4RI is will be
-included in the Sage mathematics software in the near future. M4RIE is
-available under the General Public License Version 2 or later (GPLv2+).
+M4RIE is a library for fast arithmetic with dense matrices over F_2^e.
+It is an add-on to the M4RI library, which implements fast arithmetic
+with dense matrices over F_2.  M4RIE is used by the Sage mathematics
+software.
 
 %package	-n %{libm4rie}
 Group:		System/Libraries
@@ -50,18 +56,19 @@ Provides:	%{name}-devel = %{version}-%{release}
 Requires:	%{libm4rie} = %{version}-%{release}
 
 %description	-n %{libm4rie_devel}
-Fast arithmetic with dense matrices over F2 for 2 <= e <= 10.
+The %{name}-devel package contains libraries and header files for
+developing applications that use %{name}.
 
 %prep
 %setup -q -n m4rie-%{snapshot}
-%patch0 -p1
-
-# Fix the version number in the doxygen documentation
-sed -ri "s/^(PROJECT_NUMBER[[:blank:]]+= 0\.).*/\1%{version}/" src/Doxyfile
+%patch0
+%patch1
+%patch2
+cp -p %{SOURCE1} m4rie/Doxyfile
 
 %build
 perl -pi -e 's|^(libm4rie_la_LIBADD = -lm4ri)|$1 -lm|;' Makefile.am
-autoreconf
+autoreconf -i
 %configure --disable-static
 
 # The configure step picks up -fopenmp from the m4ri CFLAGS.  However, m4rie
@@ -70,12 +77,14 @@ autoreconf
 sed -i "s/M4RI_CFLAGS =.*/M4RI_CFLAGS =/" Makefile bench/Makefile
 
 %make
-cd src
+cd m4rie
 doxygen
+cd ../doc/latex
+make
 
 %install
-%makeinstall_std
-rm -f doc/html/installdox
+make install DESTDIR=$RPM_BUILD_ROOT
+rm -f $RPM_BUILD_ROOT%{_libdir}/lib%{name}.la
 
 %check
 make check
@@ -85,21 +94,6 @@ make check
 %{_libdir}/libm4rie-*.so
 
 %files		-n %{libm4rie_devel}
-%doc doc/html
+%doc doc/latex/refman.pdf
 %{_includedir}/m4rie
 %{_libdir}/libm4rie.so
-
-
-%changelog
-* Wed Aug 15 2012 Paulo Andrade <pcpa@mandriva.com.br> 0.20120415-2
-+ Revision: 814866
-- Bump and rebuild.
-- Another release bump and rebuild.
-- Bump release and rebuild.
-- Update to release matching http://pkgs.fedoraproject.org/cgit/m4rie.git
-
-* Tue Jan 24 2012 Paulo Andrade <pcpa@mandriva.com.br> 0.20111004-1
-+ Revision: 767464
-- import libm4rie
-- import libm4rie
-

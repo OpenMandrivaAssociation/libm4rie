@@ -1,0 +1,24 @@
+--- ./m4rie/conversion.h.orig	2013-03-21 10:12:16.000000000 -0600
++++ ./m4rie/conversion.h	2013-04-30 16:25:28.702192912 -0600
+@@ -208,7 +208,7 @@ static inline mzed_t *mzed_addmul_karats
+  * \param A Matrix
+  * \param r Row index.
+  * \param c Column index.
+- * \param X Multiplier
++ * \param x Multiplier
+  *
+  * \ingroup RowOperations
+  */
+--- ./m4rie/gf2e.h.orig	2012-08-21 07:39:33.000000000 -0600
++++ ./m4rie/gf2e.h	2013-04-30 16:26:30.116066989 -0600
+@@ -44,8 +44,8 @@ struct gf2e_struct {
+   word minpoly;   /**<  Irreducible polynomial of degree \e. */
+ 
+   word *pow_gen; /**< pow_gen[i] holds \f$a^i / <f>\f$ for \f$a\f$ a generator of this field.  */
+-  word *red;     /**< red[i] holds precomputed reductors for the minpoly. \f$\f$. */
+-  word **_mul;   /**< mul[a][b] holds \f$ a \cdot b\f for small fields$. */
++  word *red;     /**< red[i] holds precomputed reductors for the minpoly. */
++  word **_mul;   /**< mul[a][b] holds \f$ a \cdot b\f$ for small fields. */
+ 
+   word (*inv)(const gf2e *ff, const word a); /**< implements a^(-1) for a in \GF2E */
+   word (*mul)(const gf2e *ff, const word a, const word b); /**< implements a*b for a in \GF2E */
