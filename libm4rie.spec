@@ -9,7 +9,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	Linear Algebra over F_2^e
 Version:	0.%{snapshot}
-Release:	1
+Release:	2
 URL:		http://m4ri.sagemath.org
 Source:		http://m4ri.sagemath.org/downloads/m4rie-%{snapshot}.tar.gz
 # The doxygen control file was omitted from this release
