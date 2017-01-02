@@ -1,52 +1,6 @@
---- ./tests/test_smallops.cc.orig	2012-08-17 14:10:46.000000000 -0600
-+++ ./tests/test_smallops.cc	2013-04-30 16:49:31.434281206 -0600
-@@ -75,11 +75,11 @@ int test_slice_known_answers(gf2e *ff, i
-   mzd_t *one = mzd_init(m,n);
-   mzd_set_ui(one, 1);
- 
--  for(int j=0; j<ff->degree; j++) {
-+  for(unsigned int j=0; j<ff->degree; j++) {
-     mzed_set_ui(A, 1<<j);
-     mzd_slice_t *a = mzed_slice(NULL, A);
- 
--    for(int i=0; i<a->depth; i++) {
-+    for(unsigned int i=0; i<a->depth; i++) {
-       if (i!=j) {
-         m4rie_check( mzd_is_zero(a->x[i]) );
-       } else {
---- ./tests/testing.h.orig	2012-08-15 04:30:46.000000000 -0600
-+++ ./tests/testing.h	2013-04-30 16:41:57.475236826 -0600
-@@ -121,7 +121,7 @@ static inline void mzd_slice_clear_canar
-   const word mask_end   = __M4RI_LEFT_BITMASK((A->x[0]->offset + A->ncols)%m4ri_radix);
-   const rci_t n = A->x[0]->width-1;
- 
--  for(int e=0; e<A->finite_field->degree; e++) {
-+  for(unsigned int e=0; e<A->finite_field->degree; e++) {
-     for(rci_t i=0; i<A->nrows; i++) {
-       A->x[e]->rows[i][0] &=mask_begin;
-       A->x[e]->rows[i][n] &=mask_end;
-@@ -143,8 +143,8 @@ static inline int mzd_slice_canary_is_al
-         return 0;
-       }
-     }
--    return 1;
-   }
-+  return 1;
- }
- 
- static inline mzed_t *random_mzed_t(gf2e *ff, int m, int n) {
---- ./m4rie/mzd_poly.h.orig	2012-08-28 13:03:32.000000000 -0600
-+++ ./m4rie/mzd_poly.h	2013-04-30 16:36:15.475917430 -0600
-@@ -64,7 +64,7 @@ static inline void _poly_add(mzd_t **c,
-   case  0:
-     break;
-   default:
--    for(int i=0; i<length; i++)
-+    for(unsigned int i=0; i<length; i++)
-       mzd_add(c[ i], a[ i], b[ i]);
-   }
- }
-@@ -142,8 +142,8 @@ static inline mzd_poly_t *_mzd_poly_addm
+--- ./m4rie/mzd_poly.h.orig	2014-10-16 11:36:25.000000000 -0600
++++ ./m4rie/mzd_poly.h	2015-10-16 09:48:47.266061097 -0600
+@@ -153,8 +153,8 @@ static inline mzd_poly_t *_mzd_poly_addm
    if (C == NULL)
      C = mzd_poly_init(A->depth+B->depth-1, A->nrows, B->ncols);
  
@@ -57,9 +11,9 @@
        mzd_addmul(C->x[i+j], A->x[i], B->x[j], 0);
      }
    }
---- ./m4rie/mzd_slice.h.orig	2012-08-17 14:56:34.000000000 -0600
-+++ ./m4rie/mzd_slice.h	2013-04-30 16:40:25.819421995 -0600
-@@ -82,7 +82,7 @@ static inline mzd_slice_t *mzd_slice_ini
+--- ./m4rie/mzd_slice.h.orig	2014-10-16 11:36:25.000000000 -0600
++++ ./m4rie/mzd_slice.h	2015-10-16 09:48:47.284059657 -0600
+@@ -83,7 +83,7 @@ static inline mzd_slice_t *mzd_slice_ini
    A->ncols = n;
    A->depth = ff->degree;
  
@@ -68,7 +22,7 @@
      A->x[i] = mzd_init(m,n);
    return A;
  }
-@@ -142,7 +142,7 @@ static inline mzd_slice_t *_mzd_slice_ad
+@@ -143,7 +143,7 @@ static inline mzd_slice_t *_mzd_slice_ad
   */
  
  static inline void mzd_slice_free(mzd_slice_t *A) {
@@ -77,7 +31,7 @@
     mzd_free(A->x[i]);
  #if __M4RI_USE_MM_MALLOC
    _mm_free(A);
-@@ -173,7 +173,7 @@ static inline mzd_slice_t *mzd_slice_con
+@@ -398,7 +398,7 @@ static inline mzd_slice_t *mzd_slice_con
    if(C == NULL)
      C = mzd_slice_init(A->finite_field, A->nrows, A->ncols + B->ncols);
  
@@ -86,7 +40,7 @@
      mzd_concat(C->x[i], A->x[i], B->x[i]);
    }
    return C;
-@@ -200,7 +200,7 @@ static inline mzd_slice_t *mzd_slice_sta
+@@ -425,7 +425,7 @@ static inline mzd_slice_t *mzd_slice_sta
    if(C == NULL)
      C = mzd_slice_init(A->finite_field, A->nrows + B->nrows, A->ncols);
  
@@ -95,7 +49,7 @@
      mzd_stack(C->x[i], A->x[i], B->x[i]);
    }
    return C;
-@@ -224,7 +224,7 @@ static inline mzd_slice_t *mzd_slice_sub
+@@ -449,7 +449,7 @@ static inline mzd_slice_t *mzd_slice_sub
    if(S==NULL)
      S = mzd_slice_init(A->finite_field, highr - lowr, highc - lowc);
  
@@ -104,7 +58,7 @@
      mzd_submatrix(S->x[i], A->x[i], lowr, lowc, highr, highc);
    }
    return S;
-@@ -260,7 +260,7 @@ static inline mzd_slice_t *mzd_slice_ini
+@@ -485,7 +485,7 @@ static inline mzd_slice_t *mzd_slice_ini
    B->depth = A->depth;
    B->nrows = highr - lowr;
    B->ncols = highc - lowc;
@@ -113,7 +67,7 @@
      B->x[i] = mzd_init_window(A->x[i], lowr, lowc, highr, highc);
    }
    return B;
-@@ -275,7 +275,7 @@ static inline mzd_slice_t *mzd_slice_ini
+@@ -500,7 +500,7 @@ static inline mzd_slice_t *mzd_slice_ini
   */
  
  static inline void mzd_slice_free_window(mzd_slice_t *A) {
@@ -122,7 +76,7 @@
      mzd_free_window(A->x[i]);
    }
    m4ri_mm_free(A);
-@@ -636,7 +636,7 @@ static inline mzd_slice_t *mzd_slice_add
+@@ -846,7 +846,7 @@ static inline mzd_slice_t *mzd_slice_add
   */
  
  static inline void mzd_slice_randomize(mzd_slice_t *A) {
@@ -131,116 +85,8 @@
      mzd_randomize(A->x[i]);
  }
  
-@@ -653,7 +653,7 @@ static inline mzd_slice_t *mzd_slice_cop
-   if(B == NULL)
-     B = mzd_slice_init(A->finite_field, A->nrows, A->ncols);
- 
--  for(int i=0; i<A->depth; i++) {
-+  for(unsigned int i=0; i<A->depth; i++) {
-     mzd_copy(B->x[i],A->x[i]);
-   }
-   return B;
-@@ -673,7 +673,7 @@ static inline mzd_slice_t *mzd_slice_cop
- 
- static inline word mzd_slice_read_elem(const mzd_slice_t *A, const rci_t row, const rci_t col) {
-   word ret = 0;
--  for(int i=0; i<A->depth; i++) {
-+  for(unsigned int i=0; i<A->depth; i++) {
-     ret |= mzd_read_bit(A->x[i], row, col)<<i;
-   }
-   return ret;
-@@ -693,7 +693,7 @@ static inline word mzd_slice_read_elem(c
-  */
- 
- static inline void mzd_slice_add_elem(mzd_slice_t *A, const rci_t row, const rci_t col, word elem) {
--  for(int i=0; i<A->depth; i++) {
-+  for(unsigned int i=0; i<A->depth; i++) {
-     __mzd_xor_bits(A->x[i], row, col, 1, elem&1);
-     elem=elem>>1;
-   }
-@@ -713,7 +713,7 @@ static inline void mzd_slice_add_elem(mz
-  */
- 
- static inline void mzd_slice_write_elem(mzd_slice_t *A, const rci_t row, const rci_t col, word elem) {
--  for(int i=0; i<A->depth; i++) {
-+  for(unsigned int i=0; i<A->depth; i++) {
-     mzd_write_bit(A->x[i], row, col, elem&1);
-     elem=elem>>1;
-   }
-@@ -736,7 +736,7 @@ static inline int mzd_slice_cmp(mzd_slic
-   int r = 0;
-   if ((A->finite_field != B->finite_field) | (A->depth != B->depth) )
-     return -1;
--  for(int i=0; i<A->depth; i++)
-+  for(unsigned int i=0; i<A->depth; i++)
-     r |= mzd_cmp(A->x[i],B->x[i]);
-   return r;
- }
-@@ -750,7 +750,7 @@ static inline int mzd_slice_cmp(mzd_slic
-  */
- 
- static inline int mzd_slice_is_zero(const mzd_slice_t *A) {
--  for(int i=0; i<A->depth; i++) {
-+  for(unsigned int i=0; i<A->depth; i++) {
-     if (!mzd_is_zero(A->x[i]))
-       return 0;
-   }
-@@ -768,7 +768,7 @@ static inline int mzd_slice_is_zero(cons
-  */
- 
- static inline void mzd_slice_row_swap(mzd_slice_t *A, const rci_t rowa, const rci_t rowb) {
--  for(int i=0; i<A->depth; i++) {
-+  for(unsigned int i=0; i<A->depth; i++) {
-     mzd_row_swap(A->x[i], rowa, rowb);
-   }
- }
-@@ -788,7 +788,7 @@ static inline void mzd_slice_row_swap(mz
-  */
- 
- static inline void mzd_slice_copy_row(mzd_slice_t* B, size_t i, const mzd_slice_t* A, size_t j) {
--  for(int ii=0; ii<A->depth; ii++)
-+  for(unsigned int ii=0; ii<A->depth; ii++)
-     mzd_copy_row(B->x[ii], i, A->x[ii], j);
- }
- 
-@@ -803,7 +803,7 @@ static inline void mzd_slice_copy_row(mz
-  */
- 
- static inline void mzd_slice_col_swap(mzd_slice_t *A, const rci_t cola, const rci_t colb) {
--  for(int i=0; i<A->depth; i++)
-+  for(unsigned int i=0; i<A->depth; i++)
-     mzd_col_swap(A->x[i], cola, colb);
- }
- 
-@@ -837,7 +837,7 @@ static inline void mzd_slice_col_swap_in
-  */
- 
- static inline void mzd_slice_row_add(mzd_slice_t *A, const rci_t sourcerow, const rci_t destrow) {
--  for(int i=0; i<A->depth; i++)
-+  for(unsigned int i=0; i<A->depth; i++)
-     mzd_row_add(A->x[i], sourcerow, destrow);
- }
- 
-@@ -852,7 +852,7 @@ static inline void mzd_slice_row_add(mzd
-  */
- 
- static inline void mzd_slice_row_clear_offset(mzd_slice_t *A, const rci_t row, const rci_t coloffset) {
--  for(int i=0; i<A->depth; i++)
-+  for(unsigned int i=0; i<A->depth; i++)
-     mzd_row_clear_offset(A->x[i], row, coloffset);
- }
- 
-@@ -876,7 +876,7 @@ void mzd_slice_print(const mzd_slice_t *
-  */
- 
- static inline void _mzd_slice_compress_l(mzd_slice_t *A, const rci_t r1, const rci_t n1, const rci_t r2) {
--  for(int i=0; i<A->depth; i++)
-+  for(unsigned int i=0; i<A->depth; i++)
-     _mzd_compress_l(A->x[i], r1, n1, r2);
- }
- 
---- ./m4rie/permutation.h.orig	2012-06-06 12:50:27.000000000 -0600
-+++ ./m4rie/permutation.h	2013-04-30 16:41:30.819290811 -0600
+--- ./m4rie/permutation.h.orig	2014-10-16 11:36:25.000000000 -0600
++++ ./m4rie/permutation.h	2015-10-16 09:48:47.285059577 -0600
 @@ -103,7 +103,7 @@ static inline void mzed_apply_p_right_tr
   */
  
@@ -286,3 +132,30 @@
      mzd_apply_p_right_trans_tri(A->x[i], P);
    }
  }
+--- ./tests/testing.h.orig	2014-11-02 05:21:47.000000000 -0700
++++ ./tests/testing.h	2016-02-04 19:53:34.492536082 -0700
+@@ -2,7 +2,7 @@
+ #include <m4rie/m4rie.h>
+ 
+ #define m4rie_check(expr)						\
+-  if (!expr) {								\
++  if (!(expr)) {							\
+     fail_ret += 1;                                                      \
+     printf("\n%s in %s:%d failed\n", #expr, __FILE__, __LINE__);  \
+   } 
+--- ./tests/test_smallops.c.orig	2014-11-02 05:20:30.000000000 -0700
++++ ./tests/test_smallops.c	2015-10-16 09:48:51.397730538 -0600
+@@ -75,11 +75,11 @@ int test_slice_known_answers(gf2e *ff, i
+   mzd_t *one = mzd_init(m,n);
+   mzd_set_ui(one, 1);
+ 
+-  for(int j=0; j<ff->degree; j++) {
++  for(unsigned int j=0; j<ff->degree; j++) {
+     mzed_set_ui(A, 1<<j);
+     mzd_slice_t *a = mzed_slice(NULL, A);
+ 
+-    for(int i=0; i<a->depth; i++) {
++    for(unsigned int i=0; i<a->depth; i++) {
+       if (i!=j) {
+         m4rie_check( mzd_is_zero(a->x[i]) );
+       } else {

@@ -1,4 +1,4 @@
-%define	snapshot		20130416
+%define	snapshot		20150908
 %define	name			libm4rie
 %define major			0
 %define	libm4rie		%mklibname m4rie %{major}
@@ -9,18 +9,14 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	Linear Algebra over F_2^e
 Version:	0.%{snapshot}
-Release:	2
-URL:		http://m4ri.sagemath.org
-Source:		http://m4ri.sagemath.org/downloads/m4rie-%{snapshot}.tar.gz
+Release:	1
+URL:		https://bitbucket.org/malb/m4rie
+Source:		https://bitbucket.org/malb/m4rie/downloads/m4rie-%{snapshot}.tar.gz
 # The doxygen control file was omitted from this release
 Source1:	m4rie-doxyfile
 Source2:	%{name}.rpmlintrc
 # Fix compiler warnings that may indicate runtime / test-time problems
 Patch0:		m4rie-warning.patch
-# Add aarch64 support.
-Patch1:		m4rie-aarch64.patch
-# Fix a broken doxygen construct
-Patch2:		m4rie-doxygen.patch
 
 BuildRequires:	doxygen
 BuildRequires:	givaro-devel
@@ -62,8 +58,6 @@ developing applications that use %{name}.
 %prep
 %setup -q -n m4rie-%{snapshot}
 %patch0
-%patch1
-%patch2
 cp -p %{SOURCE1} m4rie/Doxyfile
 
 %build
