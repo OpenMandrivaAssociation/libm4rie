@@ -18,6 +18,11 @@ Source2:	%{name}.rpmlintrc
 # Fix compiler warnings that may indicate runtime / test-time problems
 Patch0:		m4rie-warning.patch
 
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	doxygen
 BuildRequires:	givaro-devel
 BuildRequires:	gmpxx-devel
